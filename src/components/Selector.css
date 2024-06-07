@@ -1,5 +1,10 @@
+.wrapper {
+  position: relative;
+}
+
 .selector-container {
   position: absolute;
+  left: -166%;
   background: var(--background-color);
   width: 20rem;
   font-weight: 500;
@@ -68,6 +73,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  width: 100%;
   padding: 0.5rem;
   font-size: 0.875rem;
   cursor: pointer;

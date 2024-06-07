@@ -1,4 +1,4 @@
-const apiUrl = 'https://api-eu.okotoki.com/coins'
+const apiUrl = import.meta.env.VITE_API_URL
 
 async function getCoins(): Promise<Item[]> {
   if (!apiUrl) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Search, Star } from 'lucide-react'
 
+import useLocalStorage from '../hooks/useLocalStorage'
 import { getCoins } from '../api/getCoins'
 
 import './Selector.css'
@@ -24,10 +25,16 @@ const DropdownItem: React.FC<DropdownItemProps> = ({
   item,
   isVisible,
   toggleFavorite,
+  isFavorite,
 }) => (
-  <li className={`dropdown-item ${isVisible ? 'visible' : 'hidden'}`}>
-    <Star size={18} onClick={() => toggleFavorite(item)} />
-    <span>{item}</span>
+  <li>
+    <button
+      className={`dropdown-item ${isVisible ? 'visible' : 'hidden'}`}
+      onClick={() => toggleFavorite(item)}
+    >
+      <Star size={18} style={{ color: isFavorite ? 'gold' : 'inherit' }} />
+      <span>{item}</span>
+    </button>
   </li>
 )
 
@@ -49,7 +56,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
 
 const Selector: React.FC = () => {
   const [coins, setCoins] = useState<Item[]>([])
-  const [favorites, setFavorites] = useState<Item[]>([])
+  const [favorites, setFavorites] = useLocalStorage('favorites', [])
   const [inputValue, setInputValue] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
   const [showFavorites, setShowFavorites] = useState<boolean>(false)
@@ -59,16 +66,26 @@ const Selector: React.FC = () => {
     fetchedData.then((data) => setCoins(data))
   }, [])
 
-  const toggleFavorite = (item: Item) => {
-    setFavorites((prevFavorites) =>
-      prevFavorites.includes(item)
-        ? prevFavorites.filter((fav) => fav !== item)
-        : [...prevFavorites, item],
-    )
+  const removeFromFavorites = (item: Item, prevFavorites: Item[]) => {
+    return prevFavorites.filter((fav) => fav !== item)
   }
 
-  const filteredItems = (showFavorites ? favorites : coins).filter((coin) =>
-    coin.toLowerCase().includes(inputValue.toLowerCase()),
+  const addToFavorites = (item: Item, prevFavorites: Item[]) => {
+    return [...prevFavorites, item]
+  }
+
+  const toggleFavorite = (item: Item) => {
+    setFavorites((prevFavorites: Item[]) => {
+      const updatedFavorites = prevFavorites.includes(item)
+        ? removeFromFavorites(item, prevFavorites)
+        : addToFavorites(item, prevFavorites)
+
+      return updatedFavorites
+    })
+  }
+
+  const filteredItems = (showFavorites ? favorites : coins).filter(
+    (coin: string) => coin.toLowerCase().includes(inputValue.toLowerCase()),
   )
 
   return (
@@ -98,7 +115,7 @@ const Selector: React.FC = () => {
           <ul
             className={`dropdown ${open ? 'dropdown-open' : 'dropdown-closed'}`}
           >
-            {filteredItems.map((item) => (
+            {filteredItems.map((item: Item) => (
               <div className="dropdown-item-wrapper" key={item}>
                 <DropdownItem
                   item={item}
