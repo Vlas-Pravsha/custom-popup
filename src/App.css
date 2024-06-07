@@ -1,0 +1,34 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 5px 15px;
+  gap: 6px;
+}
+.search:hover {
+  background: grey;
+  border: 1px solid white;
+}
+
+.content {
+  display: flex;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  juctify-content: center;
+  padding: 15px;
+  gap: 10px;
+  position: absolute;
+  left: 39.1%;
+  width: 240px;
+}
+
+.search__text {
+  text-transform: uppercase;
+}
