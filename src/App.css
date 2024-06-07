@@ -5,30 +5,15 @@
   text-align: center;
 }
 
-.search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 5px 15px;
-  gap: 6px;
-}
-.search:hover {
-  background: grey;
-  border: 1px solid white;
-}
-
-.content {
-  display: flex;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.6);
-  juctify-content: center;
-  padding: 15px;
-  gap: 10px;
-  position: absolute;
-  left: 39.1%;
-  width: 240px;
-}
-
-.search__text {
-  text-transform: uppercase;
+:root {
+  --background-color: #1a1a1a;
+  --border-color: rgba(255, 255, 255, 0.7);
+  --hover-border-color: rgba(0, 0, 0, 0.5);
+  --dropdown-bg-color: rgba(0, 0, 0, 0.2);
+  --search-icon-color: gray;
+  --input-text-color: rgba(255, 255, 255, 0.8);
+  --item-hover-bg-color: rgba(0, 0, 0, 0.1);
+  --item-hover-text-color: white;
+  --visible-text-color: rgba(255, 255, 255, 0.7);
+  --button-hover-bg-color: rgba(255, 255, 255, 0.6);
 }

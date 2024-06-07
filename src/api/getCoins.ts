@@ -1,6 +1,10 @@
 const apiUrl = 'https://api-eu.okotoki.com/coins'
 
-async function getCoins() {
+async function getCoins(): Promise<Item[]> {
+  if (!apiUrl) {
+    throw new Error('API URL is not defined')
+  }
+
   try {
     const response = await fetch(apiUrl)
     return await response.json()
