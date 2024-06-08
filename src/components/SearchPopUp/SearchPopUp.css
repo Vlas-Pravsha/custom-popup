@@ -92,6 +92,10 @@
   gap: 0.25rem;
 }
 
+.active {
+  color: var(--button-hover-bg-color);
+}
+
 .all-coins-button,
 .favorites-button {
   text-transform: uppercase;
@@ -116,4 +120,19 @@
 .dropdown-item-wrapper:hover {
   background-color: var(--button-hover-bg-color);
   border-radius: 0.5rem;
+}
+
+.dropdown::-webkit-scrollbar {
+  width: 12px;
+}
+
+.dropdown::-webkit-scrollbar-track {
+  background: var(--dropdown-bg-color);
+  border-radius: 0.75rem;
+}
+
+.dropdown::-webkit-scrollbar-thumb {
+  background-color: black;
+  border-radius: 0.75rem;
+  border: 3px solid var(--dropdown-bg-color);
 }

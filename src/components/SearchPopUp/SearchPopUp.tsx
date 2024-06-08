@@ -3,7 +3,7 @@ import { Search } from 'lucide-react'
 
 import useLocalStorage from '../../hooks/useLocalStorage'
 import useDebounce from '../../hooks/useDebounce'
-import { getCoins } from '../../api/getCoins'
+import { getCoins } from '../../api/сoins'
 
 import DropdownList from './DropdownList'
 import FavoritesToggle from './FavoritesToggle'
