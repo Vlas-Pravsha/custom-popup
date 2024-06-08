@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Search } from 'lucide-react'
 
 import useLocalStorage from '../../hooks/useLocalStorage'
+import useDebounce from '../../hooks/useDebounce'
 import { getCoins } from '../../api/getCoins'
 
 import DropdownList from './DropdownList'
@@ -14,14 +15,18 @@ type Item = string
 
 const SearchPopUp: React.FC = () => {
   const [coins, setCoins] = useState<Item[]>([])
-  const [favorites, setFavorites] = useLocalStorage('favorites', [])
   const [inputValue, setInputValue] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
   const [showFavorites, setShowFavorites] = useState<boolean>(false)
+  const [favorites, setFavorites] = useLocalStorage('favorites', [])
+  const debouncedSearch = useDebounce<string>(inputValue)
 
   useEffect(() => {
-    const fetchedData = getCoins()
-    fetchedData.then((data) => setCoins(data))
+    const fetchData = async () => {
+      const data = await getCoins()
+      setCoins(data)
+    }
+    fetchData()
   }, [])
 
   const removeFromFavorites = (item: Item, prevFavorites: Item[]) => {
@@ -37,13 +42,13 @@ const SearchPopUp: React.FC = () => {
       const updatedFavorites = prevFavorites.includes(item)
         ? removeFromFavorites(item, prevFavorites)
         : addToFavorites(item, prevFavorites)
-
       return updatedFavorites
     })
   }
 
   const filteredItems = (showFavorites ? favorites : coins).filter(
-    (coin: string) => coin.toLowerCase().includes(inputValue.toLowerCase()),
+    (coin: string) =>
+      coin.toLowerCase().includes(debouncedSearch.toLowerCase()),
   )
 
   return (
@@ -69,4 +74,5 @@ const SearchPopUp: React.FC = () => {
     </div>
   )
 }
+
 export default SearchPopUp
