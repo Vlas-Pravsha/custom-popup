@@ -1,11 +1,11 @@
-import Selector from './components/Selector'
+import SearchPopUp from './components/SearchPopUp/SearchPopUp'
 import '@unocss/reset/tailwind.css'
 import './App.css'
 
 const App = () => {
   return (
     <div className="App">
-      <Selector />
+      <SearchPopUp />
     </div>
   )
 }
