@@ -23,15 +23,11 @@ interface SearchInputProps {
 
 const DropdownItem: React.FC<DropdownItemProps> = ({
   item,
-  isVisible,
   toggleFavorite,
   isFavorite,
 }) => (
   <li>
-    <button
-      className={`dropdown-item ${isVisible ? 'visible' : 'hidden'}`}
-      onClick={() => toggleFavorite(item)}
-    >
+    <button className="dropdown-item" onClick={() => toggleFavorite(item)}>
       <Star size={18} style={{ color: isFavorite ? 'gold' : 'inherit' }} />
       <span>{item}</span>
     </button>

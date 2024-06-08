@@ -83,15 +83,6 @@
   color: var(--item-hover-text-color);
 }
 
-.visible {
-  display: flex;
-  color: var(--visible-text-color);
-}
-
-.hidden {
-  display: none;
-}
-
 .buttons-wrapper {
   display: flex;
   align-items: center;
