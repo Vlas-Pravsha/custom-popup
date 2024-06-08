@@ -1,11 +1,16 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Search } from 'lucide-react'
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import { Search, Star } from 'lucide-react'
 
 import useLocalStorage from '../../hooks/useLocalStorage'
 import useDebounce from '../../hooks/useDebounce'
 import { getCoins } from '../../api/сoins'
 
-import DropdownList from './DropdownList'
 import FavoritesToggle from './FavoritesToggle'
 import SearchInput from './SearchInput'
 
@@ -31,7 +36,7 @@ const SearchPopUp: React.FC = () => {
     fetchData()
   }, [])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const scrollElement = scrollElementRef.current
 
     if (!scrollElement) {
@@ -40,15 +45,22 @@ const SearchPopUp: React.FC = () => {
 
     const handleScroll = () => {
       const scrollTop = scrollElement.scrollTop
+
       setScrollTop(scrollTop)
     }
 
+    handleScroll()
+
     scrollElement.addEventListener('scroll', handleScroll)
 
-    return () => {
-      scrollElement.removeEventListener('scroll', handleScroll)
-    }
+    return () => scrollElement.removeEventListener('scroll', handleScroll)
   }, [scrollElementRef])
+
+  const filteredItems = useMemo(() => {
+    return (showFavorites ? favorites : coins).filter((coin: string) =>
+      coin.toLowerCase().includes(debouncedSearch.toLowerCase()),
+    )
+  }, [debouncedSearch, showFavorites, favorites, coins])
 
   const virtualItems = useMemo(() => {
     const rangeStart = scrollTop
@@ -58,7 +70,7 @@ const SearchPopUp: React.FC = () => {
     let endIndex = Math.ceil(rangeEnd / 37)
 
     startIndex = Math.max(0, startIndex - 3)
-    endIndex = Math.min(coins.length - 1, endIndex + 3)
+    endIndex = Math.min(filteredItems.length - 1, endIndex + 3)
 
     const virtualItems = []
 
@@ -70,10 +82,10 @@ const SearchPopUp: React.FC = () => {
     }
 
     return virtualItems
-  }, [scrollTop, coins.length])
+  }, [scrollTop, filteredItems])
+  console.log(virtualItems)
 
-  // const itemsToRender = coins.slice(startIndex, endIndex + 1)
-  const totalListHeight = coins.length * 37 // Adjust the height calculation
+  const totalListHeight = filteredItems.length * 37
 
   const removeFromFavorites = (item: Item, prevFavorites: Item[]) => {
     return prevFavorites.filter((fav) => fav !== item)
@@ -92,11 +104,6 @@ const SearchPopUp: React.FC = () => {
     })
   }
 
-  const filteredItems = (showFavorites ? favorites : coins).filter(
-    (coin: string) =>
-      coin.toLowerCase().includes(debouncedSearch.toLowerCase()),
-  )
-
   return (
     <div className="wrapper">
       <button onClick={() => setOpen(!open)} className="search-button">
@@ -110,13 +117,33 @@ const SearchPopUp: React.FC = () => {
             showFavorites={showFavorites}
             setShowFavorites={setShowFavorites}
           />
-          <DropdownList
-            totalListHeight={totalListHeight}
-            scrollElementRef={scrollElementRef}
-            items={filteredItems}
-            favorites={favorites}
-            toggleFavorite={toggleFavorite}
-          />
+          <div
+            ref={scrollElementRef}
+            className="dropdown"
+            style={{ position: 'relative', height: '20rem', overflowY: 'auto' }}
+          >
+            <div style={{ height: `${totalListHeight}px` }}>
+              {virtualItems.map((virtualItem) => {
+                const item = filteredItems[virtualItem.index]
+                return (
+                  <button
+                    onClick={() => toggleFavorite(item)}
+                    key={item}
+                    className="dropdown-item"
+                    style={{
+                      height: '37px',
+                      top: 0,
+                      position: 'absolute',
+                      transform: `translateY(${virtualItem.offsetTop}px)`,
+                    }}
+                  >
+                    <Star size={18} />
+                    {item}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         </div>
       )}
     </div>
