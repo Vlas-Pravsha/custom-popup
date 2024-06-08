@@ -11,12 +11,10 @@ const DropdownItem: React.FC<DropdownItemProps> = ({
   toggleFavorite,
   isFavorite,
 }: DropdownItemProps) => (
-  <li>
-    <button className="dropdown-item" onClick={() => toggleFavorite(item)}>
-      <Star size={18} style={{ color: isFavorite ? 'gold' : 'inherit' }} />
-      <span>{item}</span>
-    </button>
-  </li>
+  <button className="dropdown-item" onClick={() => toggleFavorite(item)}>
+    <Star size={18} style={{ color: isFavorite ? 'gold' : 'inherit' }} />
+    <span>{item}</span>
+  </button>
 )
 
 export default DropdownItem

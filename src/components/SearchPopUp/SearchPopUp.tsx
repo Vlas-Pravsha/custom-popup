@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Search } from 'lucide-react'
 
 import useLocalStorage from '../../hooks/useLocalStorage'
@@ -14,6 +14,8 @@ import './SearchPopUp.css'
 type Item = string
 
 const SearchPopUp: React.FC = () => {
+  const [scrollTop, setScrollTop] = useState<number>(0)
+  const scrollElementRef = useRef<HTMLDivElement>(null)
   const [coins, setCoins] = useState<Item[]>([])
   const [inputValue, setInputValue] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
@@ -28,6 +30,50 @@ const SearchPopUp: React.FC = () => {
     }
     fetchData()
   }, [])
+
+  useEffect(() => {
+    const scrollElement = scrollElementRef.current
+
+    if (!scrollElement) {
+      return
+    }
+
+    const handleScroll = () => {
+      const scrollTop = scrollElement.scrollTop
+      setScrollTop(scrollTop)
+    }
+
+    scrollElement.addEventListener('scroll', handleScroll)
+
+    return () => {
+      scrollElement.removeEventListener('scroll', handleScroll)
+    }
+  }, [scrollElementRef])
+
+  const virtualItems = useMemo(() => {
+    const rangeStart = scrollTop
+    const rangeEnd = scrollTop + 320
+
+    let startIndex = Math.floor(rangeStart / 37)
+    let endIndex = Math.ceil(rangeEnd / 37)
+
+    startIndex = Math.max(0, startIndex - 3)
+    endIndex = Math.min(coins.length - 1, endIndex + 3)
+
+    const virtualItems = []
+
+    for (let index = startIndex; index <= endIndex; index++) {
+      virtualItems.push({
+        index,
+        offsetTop: index * 37,
+      })
+    }
+
+    return virtualItems
+  }, [scrollTop, coins.length])
+
+  // const itemsToRender = coins.slice(startIndex, endIndex + 1)
+  const totalListHeight = coins.length * 37 // Adjust the height calculation
 
   const removeFromFavorites = (item: Item, prevFavorites: Item[]) => {
     return prevFavorites.filter((fav) => fav !== item)
@@ -65,6 +111,8 @@ const SearchPopUp: React.FC = () => {
             setShowFavorites={setShowFavorites}
           />
           <DropdownList
+            totalListHeight={totalListHeight}
+            scrollElementRef={scrollElementRef}
             items={filteredItems}
             favorites={favorites}
             toggleFavorite={toggleFavorite}
